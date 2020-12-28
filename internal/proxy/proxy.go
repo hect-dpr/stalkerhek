@@ -3,7 +3,6 @@ package proxy
 import (
 	"log"
 	"net/http"
-	"sync"
 
 	"github.com/erkexzcx/stalkerhek/pkg/stalker"
 )
@@ -17,9 +16,9 @@ func Start(chs map[string]*stalker.Channel, flagBind *string) {
 	for k, v := range chs {
 		playlist[k] = &Channel{
 			StalkerChannel: v,
-			Mux:            sync.Mutex{},
-			Logo:           v.Logo(),
-			Genre:          v.Genre(),
+			// Mux:            sync.Mutex{},
+			Logo:  v.Logo(),
+			Genre: v.Genre(),
 		}
 	}
 
@@ -31,6 +30,14 @@ func Start(chs map[string]*stalker.Channel, flagBind *string) {
 	http.HandleFunc("/logo/", logoHandler)
 
 	log.Println("Web server should be started!")
+
+	// cmd := exec.Command("vlc", "http://127.0.0.1:"+strings.Split(*flagBind, ":")[1]+"/iptv")
+
+	// if output, err := cmd.Output(); err != nil {
+	// 	fmt.Println("Error", err)
+	// } else {
+	// 	fmt.Printf("Output: %s\n", output)
+	// }
 
 	panic(http.ListenAndServe(*flagBind, nil))
 }

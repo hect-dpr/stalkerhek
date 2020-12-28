@@ -9,8 +9,8 @@ func logoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cr.Channel.Mux.Lock()
-	defer cr.Channel.Mux.Unlock()
+	// cr.Channel.Mux.Lock()
+	// defer cr.Channel.Mux.Unlock()
 
 	if len(cr.Channel.LogoCache) == 0 {
 		img, contentType, err := download(cr.Channel.Logo)

@@ -3,6 +3,7 @@ package proxy
 import (
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -36,6 +37,7 @@ func getContentRequest(w http.ResponseWriter, r *http.Request, prefix string) (*
 	if !ok {
 		return nil, errors.New("bad request")
 	}
+	log.Println(channel.LinkURL)
 
 	if len(reqPathParts) == 1 {
 		return &ContentRequest{reqPathParts[0], "", channel}, nil
@@ -55,6 +57,8 @@ func (cr *ContentRequest) updateChannel() error {
 	if err != nil {
 		return err
 	}
+	log.Println("New Link")
+	log.Println(newLink)
 
 	cr.Channel.LinkURL = newLink
 	cr.Channel.LinkType = 0
@@ -100,9 +104,21 @@ func response(link string) (*http.Response, error) {
 		return nil, err
 	}
 
-	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("User-Agent", "VLC/3.0.9 LibVLC/3.0.9")
+
+	u, err := url.Parse(link)
+	if err != nil {
+		panic(err)
+	}
+	req.Header.Set("Host", u.Host)
+	// req.Header.Set("Accept", "*/*")
+	// req.Header.Set("Accept-Language", "en_US")
+	// req.Header.Set("Range", "bytes=0-")
 
 	resp, err := httpClient.Do(req)
+	log.Println(req)
+	log.Println(resp)
+
 	if err != nil {
 		return nil, err
 	}

@@ -13,8 +13,9 @@ func channelHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Lock this channel, so no other routine can request upstream servers
-	cr.Channel.Mux.Lock()
-	defer cr.Channel.Mux.Unlock()
+	// cr.Channel.Mux.Lock()
+	// defer cr.Channel.Mux.Unlock()
+	log.Println("Request inn!!!")
 
 	contentRequestHandler(w, r, cr)
 }
@@ -25,6 +26,8 @@ func contentRequestHandler(w http.ResponseWriter, r *http.Request, cr *ContentRe
 			log.Println("Failed to update channel:", err)
 		}
 	}
+	log.Println("cr.Channel.LinkType")
+	log.Println(cr.Channel.LinkType)
 
 	switch cr.Channel.LinkType {
 	case linkTypeUnknown:

@@ -53,9 +53,9 @@ func (c *Config) Validate() error {
 	if c.MAC == "" {
 		return errors.New("MAC cannot be empty")
 	}
-	if !strings.HasSuffix(c.Location, ".php") {
-		return errors.New("invalid Stalker portal location: it must end with '.php'")
-	}
+// 	if !strings.HasSuffix(c.Location, ".php") {
+// 		return errors.New("invalid Stalker portal location: it must end with '.php'")
+// 	}
 
 	if strings.Replace(c.TimeZone, " ", "", 1) != c.TimeZone {
 		return errors.New("timezone cannot contain spaces")
@@ -64,11 +64,11 @@ func (c *Config) Validate() error {
 		return errors.New("timezone cannot be empty")
 	}
 
-	if strings.Replace(c.Token, " ", "", 1) != c.Token {
-		return errors.New("token cannot contain spaces")
-	}
-	if c.Token == "" {
-		return errors.New("token cannot be empty")
-	}
+// 	if strings.Replace(c.Token, " ", "", 1) != c.Token {
+// 		return errors.New("token cannot contain spaces")
+// 	}
+// 	if c.Token == "" {
+// 		return errors.New("token cannot be empty")
+// 	}
 	return nil
 }

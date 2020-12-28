@@ -1,11 +1,16 @@
 package proxy
 
 import (
+	"log"
 	"net/http"
 )
 
 func handleContentUnknown(w http.ResponseWriter, r *http.Request, cr *ContentRequest) {
+	log.Println(cr.Channel.LinkURL)
+
 	resp, err := response(cr.Channel.LinkURL)
+	log.Println(resp)
+
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return

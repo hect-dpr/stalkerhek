@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/erkexzcx/stalkerhek/pkg/stalker"
@@ -17,14 +16,14 @@ const (
 // Channel stores TV channel details.
 type Channel struct {
 	StalkerChannel *stalker.Channel // Reference to Stalker channel
-	Mux            sync.Mutex
+	// Mux            sync.Mutex
 
 	LinkURL     string       // Actual link
 	LinkType    int          // Default is 0 (unknown)
 	LinkM3u8Ref *M3U8Channel // Reference. For non M3U8 channels it will be empty
 
-	sessionUpdated    time.Time
-	sessionUpdatedMux sync.RWMutex
+	sessionUpdated time.Time
+	// sessionUpdatedMux sync.RWMutex
 
 	LogoCache            []byte
 	LogoCacheContentType string

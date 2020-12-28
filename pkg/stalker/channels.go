@@ -27,7 +27,7 @@ func (c *Channel) NewLink() (string, error) {
 	}
 	var tmp tmpStruct
 
-	link := c.portal.Location + "?action=create_link&type=itv&cmd=" + url.PathEscape(c.cmd) + "&JsHttpRequest=1-xml"
+	link := c.portal.Location + "?action=create_link&type=itv&forced_storage=undefined&download=0&cmd=" + url.PathEscape(c.cmd) + "&JsHttpRequest=1-xml"
 	content, err := c.portal.httpRequest(link)
 	if err != nil {
 		return "", err
@@ -39,7 +39,17 @@ func (c *Channel) NewLink() (string, error) {
 
 	strs := strings.Split(tmp.Js.Cmd, " ")
 	if len(strs) == 2 {
-		return strs[1], nil
+		u, err := url.Parse(strs[1])
+		if err != nil {
+			panic(err)
+		}
+
+		if strings.Contains(c.cmd, "localhost") {
+			return strs[1], nil
+		} else {
+			return strings.Split(c.cmd, " ")[1] + "?" + u.RawQuery, nil
+		}
+
 	}
 	return "", errors.New("Stalker portal returned invalid link to TV Channel: " + tmp.Js.Cmd)
 }
@@ -75,10 +85,18 @@ func (p *Portal) RetrieveChannels() (map[string]*Channel, error) {
 	}
 	var tmp tmpStruct
 
-	content, err := p.httpRequest(p.Location + "?type=itv&action=get_all_channels&force_ch_link_check=&JsHttpRequest=1-xml")
+	profile, err := p.httpRequest(p.Location + "?type=stb&action=get_profile&JsHttpRequest=1-xml")
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println(profile)
+
+	content, err := p.httpRequest(p.Location + "?action=get_all_channels&type=itv&&JsHttpRequest=1-xml")
+	if err != nil {
+		return nil, err
+	}
+
 	ioutil.WriteFile("/tmp/stalkerchannels.json", content, 0644)
 
 	if err := json.Unmarshal(content, &tmp); err != nil {
@@ -91,6 +109,8 @@ func (p *Portal) RetrieveChannels() (map[string]*Channel, error) {
 		return nil, err
 	}
 
+	log.Println(genres)
+
 	// Build channels list and return
 	channels := make(map[string]*Channel, len(tmp.Js.Data))
 	for _, v := range tmp.Js.Data {
@@ -102,6 +122,8 @@ func (p *Portal) RetrieveChannels() (map[string]*Channel, error) {
 			genres:  &genres,
 		}
 	}
+
+	log.Println(channels)
 
 	return channels, nil
 }
